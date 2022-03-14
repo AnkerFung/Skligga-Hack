@@ -1,16 +1,16 @@
 {
   "schemaVersion": 1,
-  "id": "modid",
-  "version": "${version}",
+  "id": "skliggahack",
+  "version": "0.1.0",
 
-  "name": "Example Mod",
-  "description": "This is an example description! Tell everyone what your mod is about!",
+  "name": "Skligga Hack",
+  "description": "SKLIGGAS ON TOP EZZZZZZZZ",
   "authors": [
-    "Me!"
+    "anker"
   ],
   "contact": {
     "homepage": "https://fabricmc.net/",
-    "sources": "https://github.com/FabricMC/fabric-example-mod"
+    "sources": "https://github.com/femhack/Skligga-Hack/"
   },
 
   "license": "CC0-1.0",
@@ -19,11 +19,11 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "net.fabricmc.example.ExampleMod"
+      "net.skliggahack.Main"
     ]
   },
   "mixins": [
-    "modid.mixins.json"
+    "skliggahack.mixins.json"
   ],
 
   "depends": {
