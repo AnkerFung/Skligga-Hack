@@ -1,5 +1,6 @@
 package net.skliggahack.module.modules.combat;
 
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.item.ItemStack;
@@ -8,6 +9,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.hit.HitResult;
 import net.minecraft.util.math.BlockPos;
 import net.skliggahack.SkliggaHack;
 import net.skliggahack.event.EventManager;
@@ -17,6 +19,7 @@ import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
 import net.skliggahack.module.setting.BooleanSetting;
 import net.skliggahack.module.setting.IntegerSetting;
+import net.skliggahack.util.BlockUtils;
 import net.skliggahack.util.CrystalUtils;
 import org.lwjgl.glfw.GLFW;
 
@@ -139,7 +142,11 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 	public void onItemUse(ItemUseEvent event)
 	{
 		ItemStack mainHandStack = MC.player.getMainHandStack();
-		if (mainHandStack.isOf(Items.END_CRYSTAL))
-			event.cancel();
+		if (MC.crosshairTarget.getType() == HitResult.Type.BLOCK)
+		{
+			BlockHitResult hit = (BlockHitResult) MC.crosshairTarget;
+			if (mainHandStack.isOf(Items.END_CRYSTAL) && BlockUtils.isBlock(Blocks.OBSIDIAN, hit.getBlockPos()))
+				event.cancel();
+		}
 	}
 }

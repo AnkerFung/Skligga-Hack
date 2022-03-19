@@ -4,7 +4,6 @@ import net.minecraft.client.MinecraftClient;
 import net.skliggahack.command.CommandParser;
 import net.skliggahack.event.EventManager;
 import net.skliggahack.gui.ClickGui;
-import net.skliggahack.hud.Hud;
 import net.skliggahack.keybind.KeybindManager;
 import net.skliggahack.module.ModuleManager;
 import net.skliggahack.util.CrystalDataTracker;
@@ -22,7 +21,6 @@ public enum SkliggaHack
 	private KeybindManager keybindManager;
 	private ClickGui gui;
 	private boolean guiInitialized = false;
-	private Hud hud;
 	private CrystalDataTracker crystalDataTracker;
 
 	public void init()
@@ -32,7 +30,6 @@ public enum SkliggaHack
 		commandParser = new CommandParser();
 		keybindManager = new KeybindManager();
 		gui = new ClickGui();
-		hud = new Hud();
 		crystalDataTracker = new CrystalDataTracker();
 	}
 

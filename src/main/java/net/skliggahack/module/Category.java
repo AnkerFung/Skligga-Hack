@@ -7,5 +7,5 @@ public enum Category implements Serializable
 	COMBAT,
 	RENDER,
 	MISC,
-	NONE
+	HUD
 }

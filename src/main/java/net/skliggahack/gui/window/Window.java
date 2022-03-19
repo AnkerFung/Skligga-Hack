@@ -23,6 +23,7 @@ public class Window
 	private double scrollAmount = 0;
 	protected boolean minimized = false;
 	protected ArrayList<Component> components = new ArrayList<>();
+	private String title = "";
 	private boolean isDraggable = true;
 	private boolean draggable = true;
 	private boolean closable = true;
@@ -39,6 +40,11 @@ public class Window
 		this.length = length;
 	}
 
+	public void setTitle(String title)
+	{
+		this.title = title;
+	}
+
 	public void addComponent(Component component)
 	{
 		components.add(component);
@@ -46,10 +52,13 @@ public class Window
 
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta)
 	{
+		TextRenderer textRenderer = MC.textRenderer;
 		if (!minimized)
 		{
 			RenderSystem.setShader(GameRenderer::getPositionShader);
 			RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 0.4f);
+			GL11.glDisable(GL11.GL_CULL_FACE);
+			GL11.glEnable(GL11.GL_BLEND);
 			if (parent.getTopWindow() == this)
 				RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 0.6f);
 			RenderUtils.drawQuad(x, y, x + width, y + length, matrices);
@@ -59,7 +68,7 @@ public class Window
 				GL11.glEnable(GL11.GL_BLEND);
 				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 				RenderSystem.lineWidth(1);
-				component.render(matrices, mouseX, (int) (mouseY), delta);
+				component.render(matrices, mouseX, mouseY, delta);
 				GL11.glEnable(GL11.GL_CULL_FACE);
 				GL11.glDisable(GL11.GL_BLEND);
 			}
@@ -85,7 +94,6 @@ public class Window
 			double x = getX() + width - 10;
 			double y = getY();
 			RenderUtils.drawQuad(x, y, x + 10, y + 10, matrices);
-			TextRenderer textRenderer = MC.textRenderer;
 			textRenderer.draw(matrices, "x", (float) (x + 2), (float) y, 0xFFFFFFFF);
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glDisable(GL11.GL_BLEND);
@@ -99,11 +107,11 @@ public class Window
 			double x = getX() + width - 25;
 			double y = getY();
 			RenderUtils.drawQuad(x, y, x + 10, y + 10, matrices);
-			TextRenderer textRenderer = MC.textRenderer;
 			textRenderer.draw(matrices, minimized ? "+" : "-", (float) (x + 2), (float) y, 0xFFFFFFFF);
 			GL11.glEnable(GL11.GL_CULL_FACE);
 			GL11.glDisable(GL11.GL_BLEND);
 		}
+		textRenderer.draw(matrices, title, (float) (x + 2), (float) (y + 1), 0xFFFFFFFF);
 	}
 
 	public void onMouseMoved(double mouseX, double mouseY)

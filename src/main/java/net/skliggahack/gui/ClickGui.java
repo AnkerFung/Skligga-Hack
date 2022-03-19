@@ -8,11 +8,13 @@ import net.minecraft.util.Identifier;
 import net.skliggahack.SkliggaHack;
 import net.skliggahack.gui.component.ModuleButtonComponent;
 import net.skliggahack.gui.window.Window;
+import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
 
 import static net.skliggahack.SkliggaHack.MC;
 
@@ -28,14 +30,26 @@ public class ClickGui
 
 	public void init()
 	{
-		Window window = new Window(this, 100, 100, 100, 400);
-		int y = 20;
+		TreeMap<Category, Window> categorizedWindows = new TreeMap<>();
+		TreeMap<Category, Double> heights = new TreeMap<>();
+		double x = 25;
+		for (Category category : Category.values())
+		{
+			Window window = new Window(this, x, 25, 125, 400);
+			window.setTitle(category.toString());
+			categorizedWindows.put(category, window);
+			heights.put(category, 20.0);
+			windows.add(window);
+			x += 150;
+		}
 		for (Module module : SkliggaHack.INSTANCE.getModuleManager().getModules())
 		{
+			Category category = module.getCategory();
+			Window window = categorizedWindows.get(category);
+			double y = heights.get(category);
 			window.addComponent(new ModuleButtonComponent(window, module, 10, y));
-			y += 20;
+			heights.put(category, y + 20);
 		}
-		windows.add(window);
 	}
 
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta)

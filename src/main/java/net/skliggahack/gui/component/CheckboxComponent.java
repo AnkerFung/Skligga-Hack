@@ -28,6 +28,7 @@ public class CheckboxComponent extends Component
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta)
 	{
+		super.render(matrices, mouseX, mouseY, delta);
 		double parentX = parent.getX();
 		double parentY = parent.getY();
 		double parentWidth = parent.getWidth();
@@ -38,6 +39,10 @@ public class CheckboxComponent extends Component
 		double y = Math.max(getY() + parentY, parentY);
 		double x2 = x + checkboxSize;
 		double y2 = Math.min(getY() + parentY + checkboxSize, parentY2);
+		if (getY() + parentY - parentY <= 0)
+			return;
+		if (parentY2 - (getY() + parentY) <= 0)
+			return;
 		RenderSystem.setShader(GameRenderer::getPositionShader);
 		RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1.0f);
 		RenderUtils.drawOutlinedQuad(x, y, x2, y2, matrices);

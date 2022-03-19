@@ -21,7 +21,7 @@ public class ModuleButtonComponent extends Component
 	private boolean settingWindowOpened = false;
 	private ModuleSettingWindow moduleSettingWindow;
 
-	public ModuleButtonComponent(Window parent, Module module, int x, int y)
+	public ModuleButtonComponent(Window parent, Module module, double x, double y)
 	{
 		super(parent, x, y, 10, module.getName());
 		this.module = module;
@@ -60,8 +60,8 @@ public class ModuleButtonComponent extends Component
 				RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 0.4f);
 		}
 		RenderUtils.drawQuad(x, y, x2, y2, matrices);
-		double textX = x + 5;
-		double textY = y;
+		double textX = x + 2;
+		double textY = y + 1;
 		ITextRenderer textRenderer = (ITextRenderer) MC.textRenderer;
 		textRenderer.drawTrimmed(new LiteralText(module.getName()), (float) textX, (float) textY, (int) (x2 - textX), 0x0, matrices.peek().getPositionMatrix());
 	}

@@ -39,6 +39,7 @@ public class SliderComponent extends Component
 	@Override
 	public void render(MatrixStack matrices, int mouseX, int mouseY, float delta)
 	{
+		super.render(matrices, mouseX, mouseY, delta);
 		renderBackGround(matrices);
 		renderSlider(matrices);
 		renderValue(matrices);
@@ -99,8 +100,10 @@ public class SliderComponent extends Component
 		double parentY2 = parent.getY() + parentLength;
 		double x = getX() + parentX + width / 2;
 		double y = Math.max(getY() + parentY, parentY);
-//		double x2 = x + 4;
-//		double y2 = Math.min(getY() + parentY + 10, parentY2);
+		if (getY() + parentY - parentY <= 0)
+			return;
+		if (parentY2 - (getY() + parentY) <= 0)
+			return;
 		String display = null;
 		switch (displayType)
 		{

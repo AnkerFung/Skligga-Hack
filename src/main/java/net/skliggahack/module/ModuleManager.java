@@ -4,6 +4,10 @@ import net.skliggahack.module.modules.combat.AutoDoubleHand;
 import net.skliggahack.module.modules.combat.AutoRekit;
 import net.skliggahack.module.modules.combat.CwCrystal;
 import net.skliggahack.module.modules.combat.TriggerBot;
+import net.skliggahack.module.modules.hud.SkliggaLogo;
+import net.skliggahack.module.modules.hud.SkliggaVersionText;
+import net.skliggahack.module.modules.misc.NoLoadingScreen;
+import net.skliggahack.module.modules.render.GammaOverride;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -44,6 +48,10 @@ public class ModuleManager
 		addModule(AutoDoubleHand.class);
 		addModule(AutoRekit.class);
 		addModule(CwCrystal.class);
+		addModule(GammaOverride.class);
+		addModule(NoLoadingScreen.class);
+		addModule(SkliggaLogo.class);
+		addModule(SkliggaVersionText.class);
 		addModule(TriggerBot.class);
 	}
 

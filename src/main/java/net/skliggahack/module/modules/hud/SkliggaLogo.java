@@ -1,23 +1,48 @@
-package net.skliggahack.hud;
+package net.skliggahack.module.modules.hud;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.skliggahack.SkliggaHack;
+import net.skliggahack.event.EventManager;
+import net.skliggahack.event.events.RenderHudListener;
+import net.skliggahack.module.Category;
+import net.skliggahack.module.Module;
 import org.lwjgl.opengl.GL11;
 
-public class SkliggaLogo
+public class SkliggaLogo extends Module implements RenderHudListener
 {
 	private static final Identifier logoId = new Identifier("skliggas", "logo.png");
 
-	public void render(MatrixStack matrices)
+	public SkliggaLogo()
+	{
+		super("SkliggaLogo", "SKLIGGER", true, Category.HUD);
+	}
+
+	@Override
+	public void onEnable()
+	{
+		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		eventManager.add(RenderHudListener.class, this);
+	}
+
+	@Override
+	public void onDisable()
+	{
+		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		eventManager.remove(RenderHudListener.class, this);
+	}
+
+	@Override
+	public void onRenderHud(MatrixStack matrices, double partialTicks)
 	{
 		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		matrices.push();
-		matrices.translate(27, 10, 0);
+		matrices.translate(28, 10, 0);
 		matrices.scale(0.5f, 0.5f, 1);
 		RenderSystem.setShaderColor(1, 1, 1, 1);
 		RenderSystem.setShader(GameRenderer::getPositionTexShader);
