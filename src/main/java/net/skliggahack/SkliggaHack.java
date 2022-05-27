@@ -13,7 +13,7 @@ public enum SkliggaHack
 
 	INSTANCE;
 
-	public static final MinecraftClient MC = MinecraftClient.getInstance();
+	public static MinecraftClient MC;
 
 	private EventManager eventManager;
 	private ModuleManager moduleManager;
@@ -25,6 +25,7 @@ public enum SkliggaHack
 
 	public void init()
 	{
+		MC = MinecraftClient.getInstance();
 		eventManager = new EventManager();
 		moduleManager = new ModuleManager();
 		commandParser = new CommandParser();

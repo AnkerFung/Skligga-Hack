@@ -35,7 +35,7 @@ public class BooleanSetting extends Setting<Boolean>
 	@Override
 	public Component makeComponent(Window parent)
 	{
-		return new CheckboxComponent(parent, 0, 0, v -> value = v, availability, getName());
+		return new CheckboxComponent(parent, 0, 0, value, v -> value = v, availability, getName());
 	}
 
 	public static class Builder

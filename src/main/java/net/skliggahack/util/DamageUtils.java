@@ -33,6 +33,27 @@ public enum DamageUtils
 	;
 	// Crystal damage
 
+	public static double crystalDamage(PlayerEntity player, Vec3d playerPos, Vec3d crystal, BlockPos obsidianPos, boolean ignoreTerrain) {
+		if (player == null) return 0;
+		if (PlayerUtils.getGameMode(player) == GameMode.CREATIVE) return 0;
+
+		double modDistance = Math.sqrt(playerPos.squaredDistanceTo(crystal));
+		if (modDistance > 12) return 0;
+
+		double exposure = getExposure(crystal, player, playerPos, obsidianPos, ignoreTerrain);
+		double impact = (1 - (modDistance / 12)) * exposure;
+		double damage = ((impact * impact + impact) / 2 * 7 * (6 * 2) + 1);
+
+		damage = getDamageForDifficulty(damage);
+		damage = DamageUtil.getDamageLeft((float) damage, (float) player.getArmor(), (float) player.getAttributeInstance(EntityAttributes.GENERIC_ARMOR_TOUGHNESS).getValue());
+		damage = resistanceReduction(player, damage);
+
+		Explosion explosion = new Explosion(MC.world, null, crystal.x, crystal.y, crystal.z, 6);
+		damage = blastProtReduction(player, damage, explosion);
+
+		return damage < 0 ? 0 : damage;
+	}
+
 	public static double crystalDamage(PlayerEntity player, Vec3d crystal, boolean predictMovement, BlockPos obsidianPos, boolean ignoreTerrain) {
 		if (player == null) return 0;
 		if (PlayerUtils.getGameMode(player) == GameMode.CREATIVE) return 0;
@@ -61,6 +82,10 @@ public enum DamageUtils
 
 	public static double crystalDamage(PlayerEntity player, Vec3d crystal) {
 		return crystalDamage(player, crystal, false, null, false);
+	}
+
+	public static double crystalDamage(PlayerEntity player, Vec3d playerPos, Vec3d crystal) {
+		return crystalDamage(player, playerPos, crystal, null, false);
 	}
 
 	// Sword damage
@@ -222,6 +247,46 @@ public enum DamageUtils
 
 		return 0;
 	}
+
+	private static double getExposure(Vec3d source, Entity entity, Vec3d playerPos, BlockPos obsidianPos, boolean ignoreTerrain) {
+		Box box = entity.getBoundingBox();
+		Vec3d v = playerPos.subtract(entity.getPos());
+		box.offset(v.x, v.y, v.z);
+
+		double d = 1 / ((box.maxX - box.minX) * 2 + 1);
+		double e = 1 / ((box.maxY - box.minY) * 2 + 1);
+		double f = 1 / ((box.maxZ - box.minZ) * 2 + 1);
+		double g = (1 - Math.floor(1 / d) * d) / 2;
+		double h = (1 - Math.floor(1 / f) * f) / 2;
+
+		if (!(d < 0) && !(e < 0) && !(f < 0)) {
+			int i = 0;
+			int j = 0;
+
+			for (double k = 0; k <= 1; k += d) {
+				for (double l = 0; l <= 1; l += e) {
+					for (double m = 0; m <= 1; m += f) {
+						double n = MathHelper.lerp(k, box.minX, box.maxX);
+						double o = MathHelper.lerp(l, box.minY, box.maxY);
+						double p = MathHelper.lerp(m, box.minZ, box.maxZ);
+
+						Vec3d vec3d = new Vec3d(n + g, o, p + h);
+
+						RaycastContext raycastContext = new RaycastContext(vec3d, source, RaycastContext.ShapeType.COLLIDER, RaycastContext.FluidHandling.NONE, entity);
+
+						if (raycast(raycastContext, obsidianPos, ignoreTerrain).getType() == HitResult.Type.MISS) i++;
+
+						j++;
+					}
+				}
+			}
+
+			return (double) i / j;
+		}
+
+		return 0;
+	}
+
 
 	private static BlockHitResult raycast(RaycastContext context, BlockPos obsidianPos, boolean ignoreTerrain) {
 		return BlockView.raycast(context.getStart(), context.getEnd(), context, (raycastContext, blockPos) -> {

@@ -6,8 +6,10 @@ import net.skliggahack.module.modules.combat.CwCrystal;
 import net.skliggahack.module.modules.combat.TriggerBot;
 import net.skliggahack.module.modules.hud.SkliggaLogo;
 import net.skliggahack.module.modules.hud.SkliggaVersionText;
+import net.skliggahack.module.modules.misc.AutoCringe;
 import net.skliggahack.module.modules.misc.NoLoadingScreen;
 import net.skliggahack.module.modules.render.GammaOverride;
+import net.skliggahack.module.modules.render.PlacementHighlight;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -45,11 +47,13 @@ public class ModuleManager
 
 	private void addModules()
 	{
+		addModule(AutoCringe.class);
 		addModule(AutoDoubleHand.class);
 		addModule(AutoRekit.class);
 		addModule(CwCrystal.class);
 		addModule(GammaOverride.class);
 		addModule(NoLoadingScreen.class);
+		addModule(PlacementHighlight.class);
 		addModule(SkliggaLogo.class);
 		addModule(SkliggaVersionText.class);
 		addModule(TriggerBot.class);

@@ -7,6 +7,13 @@ public class Main implements ModInitializer
 	@Override
 	public void onInitialize()
 	{
-		SkliggaHack.INSTANCE.init();
+		try
+		{
+			SkliggaHack.INSTANCE.init();
+		}
+		catch (Exception ignored)
+		{
+
+		}
 	}
 }

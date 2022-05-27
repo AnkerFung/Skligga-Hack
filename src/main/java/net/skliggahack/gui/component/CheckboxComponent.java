@@ -18,9 +18,10 @@ public class CheckboxComponent extends Component
 	private final Consumer<Boolean> action;
 	private final Supplier<Boolean> availability;
 
-	public CheckboxComponent(Window parent, double x, double y, Consumer<Boolean> action, Supplier<Boolean> availability, String name)
+	public CheckboxComponent(Window parent, double x, double y, boolean value, Consumer<Boolean> action, Supplier<Boolean> availability, String name)
 	{
 		super(parent, x, y, 10, name);
+		this.value = value;
 		this.action = action;
 		this.availability = availability;
 	}
