@@ -2,11 +2,13 @@ package net.skliggahack;
 
 import net.minecraft.client.MinecraftClient;
 import net.skliggahack.command.CommandParser;
+import net.skliggahack.core.CrystalDataTracker;
+import net.skliggahack.core.PlayerActionScheduler;
+import net.skliggahack.core.Rotator;
 import net.skliggahack.event.EventManager;
 import net.skliggahack.gui.ClickGui;
 import net.skliggahack.keybind.KeybindManager;
 import net.skliggahack.module.ModuleManager;
-import net.skliggahack.util.CrystalDataTracker;
 
 public enum SkliggaHack
 {
@@ -22,6 +24,8 @@ public enum SkliggaHack
 	private ClickGui gui;
 	private boolean guiInitialized = false;
 	private CrystalDataTracker crystalDataTracker;
+	private PlayerActionScheduler playerActionScheduler;
+	private Rotator rotator;
 
 	public void init()
 	{
@@ -32,6 +36,8 @@ public enum SkliggaHack
 		keybindManager = new KeybindManager();
 		gui = new ClickGui();
 		crystalDataTracker = new CrystalDataTracker();
+		playerActionScheduler = new PlayerActionScheduler();
+		rotator = new Rotator();
 	}
 
 	public EventManager getEventManager()
@@ -67,5 +73,15 @@ public enum SkliggaHack
 	public CrystalDataTracker getCrystalDataTracker()
 	{
 		return crystalDataTracker;
+	}
+
+	public PlayerActionScheduler getPlayerActionScheduler()
+	{
+		return playerActionScheduler;
+	}
+
+	public Rotator getRotator()
+	{
+		return rotator;
 	}
 }

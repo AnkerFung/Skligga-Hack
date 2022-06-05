@@ -10,7 +10,8 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.RaycastContext;
 import net.skliggahack.SkliggaHack;
 import net.skliggahack.event.EventManager;
 import net.skliggahack.event.events.ItemUseListener;
@@ -21,22 +22,13 @@ import net.skliggahack.module.setting.BooleanSetting;
 import net.skliggahack.module.setting.IntegerSetting;
 import net.skliggahack.util.BlockUtils;
 import net.skliggahack.util.CrystalUtils;
+import net.skliggahack.util.RotationUtils;
 import org.lwjgl.glfw.GLFW;
 
 import static net.skliggahack.SkliggaHack.MC;
 
-public class CwCrystal extends Module implements PlayerTickListener, ItemUseListener
+public class MarlowCrystal extends Module implements PlayerTickListener, ItemUseListener
 {
-
-	private final IntegerSetting placeInterval = IntegerSetting.Builder.newInstance()
-			.setName("placeInterval")
-			.setDescription("the interval between placing crystals (in tick)")
-			.setModule(this)
-			.setValue(0)
-			.setMin(0)
-			.setMax(20)
-			.setAvailability(() -> true)
-			.build();
 
 	private final IntegerSetting breakInterval = IntegerSetting.Builder.newInstance()
 			.setName("breakInterval")
@@ -64,13 +56,12 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 			.setAvailability(() -> true)
 			.build();
 
-	private int crystalPlaceClock = 0;
-	private int crystalBreakClock = 0;
-
-	public CwCrystal()
+	public MarlowCrystal()
 	{
-		super("CwCrystal", "elias' special need >:3", false, Category.COMBAT);
+		super("MarlowCrystal", "crystal like marlow", false, Category.COMBAT);
 	}
+
+	private int crystalBreakClock = 0;
 
 	@Override
 	public void onEnable()
@@ -78,7 +69,6 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
 		eventManager.add(PlayerTickListener.class, this);
 		eventManager.add(ItemUseListener.class, this);
-		crystalPlaceClock = 0;
 		crystalBreakClock = 0;
 	}
 
@@ -99,12 +89,21 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 	}
 
 	@Override
+	public void onItemUse(ItemUseEvent event)
+	{
+		ItemStack mainHandStack = MC.player.getMainHandStack();
+		if (MC.crosshairTarget.getType() == HitResult.Type.BLOCK)
+		{
+			BlockHitResult hit = (BlockHitResult) MC.crosshairTarget;
+			if (mainHandStack.isOf(Items.END_CRYSTAL) && BlockUtils.isBlock(Blocks.OBSIDIAN, hit.getBlockPos()))
+				event.cancel();
+		}
+	}
+
+	@Override
 	public void onPlayerTick()
 	{
-		boolean dontPlaceCrystal = crystalPlaceClock != 0;
 		boolean dontBreakCrystal = crystalBreakClock != 0;
-		if (dontPlaceCrystal)
-			crystalPlaceClock--;
 		if (dontBreakCrystal)
 			crystalBreakClock--;
 		if (activateOnRightClick.get() && GLFW.glfwGetMouseButton(MC.getWindow().getHandle(), GLFW.GLFW_MOUSE_BUTTON_2) != GLFW.GLFW_PRESS)
@@ -114,7 +113,8 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 			return;
 		if (stopOnKill.get() && isDeadBodyNearby())
 			return;
-
+		Vec3d camPos = MC.player.getEyePos();
+		BlockHitResult blockHit = MC.world.raycast(new RaycastContext(camPos, camPos.add(RotationUtils.getClientLookVec().multiply(4.5)), RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, MC.player));
 		if (MC.crosshairTarget instanceof EntityHitResult hit)
 		{
 			if (!dontBreakCrystal && hit.getEntity() instanceof EndCrystalEntity crystal)
@@ -125,28 +125,14 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 				SkliggaHack.INSTANCE.getCrystalDataTracker().recordAttack(crystal);
 			}
 		}
-		if (MC.crosshairTarget instanceof BlockHitResult hit)
+		if (BlockUtils.isBlock(Blocks.OBSIDIAN, blockHit.getBlockPos()))
 		{
-			BlockPos block = hit.getBlockPos();
-			if (!dontPlaceCrystal && CrystalUtils.canPlaceCrystalServer(block))
+			if (CrystalUtils.canPlaceCrystalServer(blockHit.getBlockPos()))
 			{
-				crystalPlaceClock = placeInterval.get();
-				ActionResult result = MC.interactionManager.interactBlock(MC.player, MC.world, Hand.MAIN_HAND, hit);
+				ActionResult result = MC.interactionManager.interactBlock(MC.player, MC.world, Hand.MAIN_HAND, blockHit);
 				if (result.isAccepted() && result.shouldSwingHand())
 					MC.player.swingHand(Hand.MAIN_HAND);
 			}
-		}
-	}
-
-	@Override
-	public void onItemUse(ItemUseEvent event)
-	{
-		ItemStack mainHandStack = MC.player.getMainHandStack();
-		if (MC.crosshairTarget.getType() == HitResult.Type.BLOCK)
-		{
-			BlockHitResult hit = (BlockHitResult) MC.crosshairTarget;
-			if (mainHandStack.isOf(Items.END_CRYSTAL) && BlockUtils.isBlock(Blocks.OBSIDIAN, hit.getBlockPos()))
-				event.cancel();
 		}
 	}
 }

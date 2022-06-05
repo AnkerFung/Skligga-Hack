@@ -6,6 +6,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
+import net.skliggahack.core.Rotation;
 
 import static net.skliggahack.SkliggaHack.MC;
 
@@ -20,9 +21,10 @@ public enum RotationUtils
 
 	public static Vec3d getEyesPos(PlayerEntity player)
 	{
-		return new Vec3d(player.getX(),
-				player.getY() + player.getEyeHeight(player.getPose()),
-				player.getZ());
+//		return new Vec3d(player.getX(),
+//				player.getY() + player.getEyeHeight(player.getPose()),
+//				player.getZ());
+		return RenderUtils.getCameraPos();
 	}
 
 	public static BlockPos getEyesBlockPos()
@@ -92,31 +94,21 @@ public enum RotationUtils
 		float currentYaw = MathHelper.wrapDegrees(player.getYaw());
 		float currentPitch = MathHelper.wrapDegrees(player.getPitch());
 
-		float diffYaw = currentYaw - needed.yaw;
-		float diffPitch = currentPitch - needed.pitch;
+		float diffYaw = currentYaw - needed.getYaw();
+		float diffPitch = currentPitch - needed.getPitch();
 
 		return Math.sqrt(diffYaw * diffYaw + diffPitch * diffPitch);
 	}
 
-	public static final class Rotation
+	public static void setRotation(Rotation rotation)
 	{
-		private final float yaw;
-		private final float pitch;
+		if (!rotation.isIgnoreYaw()) MC.player.setYaw(rotation.getYaw());
+		if (!rotation.isIgnorePitch()) MC.player.setPitch(rotation.getPitch());
+	}
 
-		public Rotation(float yaw, float pitch)
-		{
-			this.yaw = MathHelper.wrapDegrees(yaw);
-			this.pitch = MathHelper.wrapDegrees(pitch);
-		}
-
-		public float getYaw()
-		{
-			return yaw;
-		}
-
-		public float getPitch()
-		{
-			return pitch;
-		}
+	public static void lookAt(Vec3d pos)
+	{
+		Rotation rot = getNeededRotations(pos);
+		setRotation(rot);
 	}
 }

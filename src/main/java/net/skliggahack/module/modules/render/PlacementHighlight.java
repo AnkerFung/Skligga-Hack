@@ -7,26 +7,22 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.ArmorMaterials;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.HitResult;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.*;
 import net.minecraft.world.RaycastContext;
+import net.skliggahack.SkliggaHack;
+import net.skliggahack.core.Rotation;
+import net.skliggahack.core.Rotator;
 import net.skliggahack.event.events.AttackEntityListener;
 import net.skliggahack.event.events.GameRenderListener;
 import net.skliggahack.event.events.PlayerTickListener;
 import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
-import net.skliggahack.util.BlockUtils;
-import net.skliggahack.util.CrystalUtils;
-import net.skliggahack.util.DamageUtils;
-import net.skliggahack.util.RenderUtils;
+import net.skliggahack.util.*;
 import org.lwjgl.opengl.GL11;
 
 import java.util.Comparator;
@@ -43,6 +39,7 @@ public class PlacementHighlight extends Module implements PlayerTickListener, At
 	}
 
 	private int renderClock = 0;
+	private int placeObiClock = -1;
 
 	@Override
 	public void onEnable()
@@ -64,8 +61,27 @@ public class PlacementHighlight extends Module implements PlayerTickListener, At
 	@Override
 	public void onPlayerTick()
 	{
+		if (false)
+		{
+			MC.world.getPlayers().parallelStream()
+					.filter(e -> e.getEntityName().equals("oChelsey"))
+					.forEach(e -> ChatUtils.info(e.getVelocity().toString()));
+		}
 		if (renderClock > 0)
 			renderClock--;
+//		if (placeObiClock == 0)
+//		{
+//			placeObiClock = -1;
+//			if (highlight != null)
+//			{
+//				InventoryUtils.selectItemFromHotbar(Items.OBSIDIAN);
+//				BlockUtils.placeBlock(highlight);
+//			}
+//		}
+//		else
+//		{
+//			placeObiClock--;
+//		}
 	}
 
 	private BlockPos highlight;
@@ -79,21 +95,25 @@ public class PlacementHighlight extends Module implements PlayerTickListener, At
 		PlayerEntity target = (PlayerEntity) event.getTarget();
 		if (MC.player.isTouchingWater() || MC.player.isInLava())
 			return;
-		if (!MC.player.isOnGround())
-			return;
 		if (!target.isOnGround())
 			return;
-		int crystalAfter = 8;
-		int placeObiAfter = 5;
+		int placeCrystalAfter = 4;
+		int breakCrystalAfter = 8;
+		int placeObiAfter = 2;
 		Vec3d targetKB = calcTargetKB(target);
 		int floorY = MC.player.getBlockY() - 1;
+
 		Vec3d targetPos = target.getPos();
-		Vec3d targetPosAtCrystal = simulatePos(targetPos, targetKB, crystalAfter);
+		Vec3d targetPosAtPlaceCrystal = simulatePos(targetPos, targetKB, placeCrystalAfter);
+		Vec3d targetPosAtBreakCrystal = simulatePos(targetPos, targetKB, breakCrystalAfter);
 		Vec3d targetPosAtPlaceObi = simulatePos(targetPos, targetKB, placeObiAfter);
+
+		Box targetBoxAtPlaceObi = target.getBoundingBox().offset(targetPosAtPlaceObi.subtract(target.getPos()));
+		Box targetBoxAtPlaceCrystal = target.getBoundingBox().offset(targetPosAtPlaceCrystal.subtract(target.getPos()));
+
 		BlockPos blockPos = MC.player.getBlockPos();
 		Stream<BlockPos> blocks = BlockUtils.getAllInBoxStream(blockPos.add(-4, 0, -4), blockPos.add(4, 0, 4));
-		Box targetBoxAtCrystal = target.getBoundingBox().offset(targetPosAtCrystal.subtract(target.getPos()));
-		Box targetBoxAtPlaceObi = target.getBoundingBox().offset(targetPosAtPlaceObi.subtract(target.getPos()));
+
 		BlockPos placement = blocks
 				.filter(b -> !BlockUtils.hasBlock(b))
 				.filter(b -> BlockUtils.hasBlock(b.add(0, -1, 0)))
@@ -101,20 +121,39 @@ public class PlacementHighlight extends Module implements PlayerTickListener, At
 				.filter(b ->
 				{
 					Vec3d startP = RenderUtils.getCameraPos();
-					Vec3d endP = Vec3d.ofBottomCenter(b).add(0, 1, 0);
+					Vec3d endP = Vec3d.ofBottomCenter(b);
 					if (endP.subtract(startP).lengthSquared() > 16)
 						return false;
 					BlockHitResult result = MC.world.raycast(new RaycastContext(RenderUtils.getCameraPos(), endP, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, MC.player));
 					return result.getType() == HitResult.Type.MISS;
 				})
-				.filter(b -> CrystalUtils.canPlaceCrystalClientAssumeObsidian(b, targetBoxAtCrystal))
-				.max(Comparator.comparingDouble(b -> DamageUtils.crystalDamage(target, targetPosAtCrystal, Vec3d.ofCenter(b, 1))))
+				.filter(b -> CrystalUtils.canPlaceCrystalClientAssumeObsidian(b, targetBoxAtPlaceCrystal))
+				.max(Comparator.comparingDouble(b -> DamageUtils.crystalDamage(target, targetPosAtBreakCrystal, Vec3d.ofCenter(b, 1), b, false)))
 				.orElse(null);
 		if (placement == null)
 			return;
+		Rotator rotator = SkliggaHack.INSTANCE.getRotator();
+		rotator.stepToward(Vec3d.ofBottomCenter(placement), placeObiAfter, () ->
+		{
+			InventoryUtils.selectItemFromHotbar(Items.OBSIDIAN);
 
-		targetPredictedPos = targetPosAtCrystal;
+			BlockPos neighbor = placement.add(0, -1, 0);
+			Direction direction = Direction.UP;
+			Vec3d center = Vec3d.ofCenter(neighbor).add(Vec3d.of(direction.getVector()).multiply(0.5));
+			ActionResult result = MC.interactionManager.interactBlock(MC.player, MC.world, Hand.MAIN_HAND, new BlockHitResult(center, Direction.UP, placement.add(0, -1, 0), false));
+
+			if (result == ActionResult.SUCCESS)
+			{
+				MC.player.swingHand(Hand.MAIN_HAND);
+				rotator.stepToward(new Rotation(0, true, MC.player.getPitch() - 15, false), 5, () ->
+				{
+					InventoryUtils.selectItemFromHotbar(Items.END_CRYSTAL);
+				});
+			}
+		});
+		placeObiClock = placeObiAfter;
 		highlight = placement;
+		targetPredictedPos = targetPosAtBreakCrystal;
 		renderClock = 40;
 	}
 
@@ -166,7 +205,7 @@ public class PlacementHighlight extends Module implements PlayerTickListener, At
 		Vec3d result = Vec3d.ZERO;
 		if (strength > 0.0)
 		{
-			Vec3d vec3d = target.getVelocity();
+			Vec3d vec3d = new Vec3d(target.getX() - target.prevX, target.getY() - target.prevY, target.getZ() - target.prevZ);
 			Vec3d vec3d2 = (new Vec3d(x, 0.0D, z)).normalize().multiply(strength);
 			result = new Vec3d(vec3d.x / 2.0 - vec3d2.x, target.isOnGround() ? Math.min(0.4D, vec3d.y / 2.0D + strength) : vec3d.y, vec3d.z / 2.0D - vec3d2.z);
 		}

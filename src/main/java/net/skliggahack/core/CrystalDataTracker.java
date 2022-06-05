@@ -1,4 +1,4 @@
-package net.skliggahack.util;
+package net.skliggahack.core;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.decoration.EndCrystalEntity;
