@@ -248,6 +248,6 @@ public class Window
 
 	public boolean isHoveringOver(double mouseX, double mouseY)
 	{
-		return RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x + width, y + length);
+		return minimized ? canDrag(mouseX, mouseY) : RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x + width, y + length);
 	}
 }

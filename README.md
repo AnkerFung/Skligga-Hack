@@ -1,9 +1,13 @@
-# Fabric Example Mod
+# Skligga Hack
+
+## About
+
+Read more about this client at [here](https://docs.google.com/document/d/1YmSodILxRPrnxpo692UZQwUI40zGr39NMjqUZmA6UEA).
 
 ## Setup
 
-For setup instructions please see the [fabric wiki page](https://fabricmc.net/wiki/tutorial:setup) that relates to the IDE that you are using.
+Use IntelliJ as your IDE. The building process should start automatically. Read Fabric wiki if there is any problem.
 
 ## License
 
-This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
+This project is licensed under the MIT License.
