@@ -14,13 +14,15 @@ public class AutoCringe extends Module implements SendChatMessageListener
 	@Override
 	public void onEnable()
 	{
-		getEventManager().add(SendChatMessageListener.class, this);
+		super.onEnable();
+		eventManager.add(SendChatMessageListener.class, this);
 	}
 
 	@Override
 	public void onDisable()
 	{
-		getEventManager().remove(SendChatMessageListener.class, this);
+		super.onDisable();
+		eventManager.remove(SendChatMessageListener.class, this);
 	}
 
 	@Override

@@ -57,7 +57,7 @@ public class SliderComponent extends Component
 		double y = Math.max(getY() + parentY, parentY);
 		double x2 = x + width;
 		double y2 = Math.min(getY() + parentY + 10, parentY2);
-		if (getY() + parentY - parentY <= 0)
+		if (getY() + 10 <= 0)
 			return;
 		if (parentY2 - (getY() + parentY) <= 0)
 			return;
@@ -79,7 +79,7 @@ public class SliderComponent extends Component
 		double y = Math.max(getY() + parentY, parentY);
 		double x2 = x + 4;
 		double y2 = Math.min(getY() + parentY + 10, parentY2);
-		if (getY() + parentY - parentY <= 0)
+		if (getY() + 10 <= 0)
 			return;
 		if (parentY2 - (getY() + parentY) <= 0)
 			return;
@@ -100,7 +100,7 @@ public class SliderComponent extends Component
 		double parentY2 = parent.getY() + parentLength;
 		double x = getX() + parentX + width / 2;
 		double y = Math.max(getY() + parentY, parentY);
-		if (getY() + parentY - parentY <= 0)
+		if (getY() + 10 <= 0)
 			return;
 		if (parentY2 - (getY() + parentY) <= 0)
 			return;
@@ -127,6 +127,10 @@ public class SliderComponent extends Component
 		double y = Math.max(getY() + parentY, parentY);
 		double x2 = x + width;
 		double y2 = Math.min(getY() + parentY + 10, parentY2);
+		if (getY() + 10 <= 0)
+			return;
+		if (parentY2 - (getY() + parentY) <= 0)
+			return;
 		if (RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x2, y2))
 		{
 			value = (mouseX - x) / width * (max - min) + min;
@@ -168,6 +172,10 @@ public class SliderComponent extends Component
 		double y = Math.max(getY() + parentY, parentY);
 		double x2 = x + width;
 		double y2 = Math.min(getY() + parentY + 10, parentY2);
+		if (getY() + 10 <= 0)
+			return false;
+		if (parentY2 - (getY() + parentY) <= 0)
+			return false;
 		if (RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x2, y2))
 		{
 			value += -amount * step;

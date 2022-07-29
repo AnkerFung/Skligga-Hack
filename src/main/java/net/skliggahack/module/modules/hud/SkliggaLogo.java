@@ -5,8 +5,6 @@ import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
-import net.skliggahack.SkliggaHack;
-import net.skliggahack.event.EventManager;
 import net.skliggahack.event.events.RenderHudListener;
 import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
@@ -18,20 +16,20 @@ public class SkliggaLogo extends Module implements RenderHudListener
 
 	public SkliggaLogo()
 	{
-		super("SkliggaLogo", "SKLIGGER", true, Category.HUD);
+		super("SkliggaLogo", "SKLIGGER", false, Category.HUD);
 	}
 
 	@Override
 	public void onEnable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onEnable();
 		eventManager.add(RenderHudListener.class, this);
 	}
 
 	@Override
 	public void onDisable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onDisable();
 		eventManager.remove(RenderHudListener.class, this);
 	}
 

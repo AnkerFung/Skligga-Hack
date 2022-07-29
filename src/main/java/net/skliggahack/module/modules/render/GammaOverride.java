@@ -1,7 +1,5 @@
 package net.skliggahack.module.modules.render;
 
-import net.skliggahack.SkliggaHack;
-import net.skliggahack.event.EventManager;
 import net.skliggahack.event.events.PlayerTickListener;
 import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
@@ -21,7 +19,7 @@ public class GammaOverride extends Module implements PlayerTickListener
 	@Override
 	public void onEnable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onEnable();
 		eventManager.add(PlayerTickListener.class, this);
 		prevGamma = MC.options.gamma;
 	}
@@ -29,7 +27,7 @@ public class GammaOverride extends Module implements PlayerTickListener
 	@Override
 	public void onDisable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onDisable();
 		eventManager.remove(PlayerTickListener.class, this);
 		MC.options.gamma = prevGamma;
 	}

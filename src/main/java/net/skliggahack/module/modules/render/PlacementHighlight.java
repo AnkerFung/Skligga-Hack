@@ -44,18 +44,20 @@ public class PlacementHighlight extends Module implements PlayerTickListener, At
 	@Override
 	public void onEnable()
 	{
+		super.onEnable();
 		renderClock = 0;
-		getEventManager().add(PlayerTickListener.class, this);
-		getEventManager().add(AttackEntityListener.class, this);
-		getEventManager().add(GameRenderListener.class, this);
+		eventManager.add(PlayerTickListener.class, this);
+		eventManager.add(AttackEntityListener.class, this);
+		eventManager.add(GameRenderListener.class, this);
 	}
 
 	@Override
 	public void onDisable()
 	{
-		getEventManager().remove(PlayerTickListener.class, this);
-		getEventManager().remove(AttackEntityListener.class, this);
-		getEventManager().remove(GameRenderListener.class, this);
+		super.onDisable();
+		eventManager.remove(PlayerTickListener.class, this);
+		eventManager.remove(AttackEntityListener.class, this);
+		eventManager.remove(GameRenderListener.class, this);
 	}
 
 	@Override

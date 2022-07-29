@@ -40,7 +40,7 @@ public class ModuleButtonComponent extends Component
 		double y = Math.max(getY() + parentY, parentY);
 		double x2 = parentX2 - getX();
 		double y2 = Math.min(getY() + parentY + 10, parentY2);
-		if (getY() + parentY - parentY <= 0)
+		if (getY() + 10 <= 0)
 			return;
 		if (parentY2 - (getY() + parentY) <= 0)
 			return;
@@ -79,6 +79,10 @@ public class ModuleButtonComponent extends Component
 		double y = getY() + parentY;
 		double x2 = parentX2 - getX();
 		double y2 = Math.min(y + 20, parentY2);
+		if (getY() + 10 <= 0)
+			return;
+		if (parentY2 - (getY() + parentY) <= 0)
+			return;
 		if (RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x2, y2))
 		{
 			if (button == GLFW.GLFW_MOUSE_BUTTON_1)

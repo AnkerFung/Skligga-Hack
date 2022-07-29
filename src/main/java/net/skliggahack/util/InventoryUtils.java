@@ -54,8 +54,9 @@ public enum InventoryUtils
 
 		for (int i = 0; i < 36; i++)
 		{
-			if (item.test(inv.getStack(i).getItem()))
-				count++;
+			ItemStack itemStack = inv.getStack(i);
+			if (item.test(itemStack.getItem()))
+				count += itemStack.getCount();
 		}
 
 		return count;

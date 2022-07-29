@@ -75,7 +75,7 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 	@Override
 	public void onEnable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onEnable();
 		eventManager.add(PlayerTickListener.class, this);
 		eventManager.add(ItemUseListener.class, this);
 		crystalPlaceClock = 0;
@@ -85,6 +85,7 @@ public class CwCrystal extends Module implements PlayerTickListener, ItemUseList
 	@Override
 	public void onDisable()
 	{
+		super.onDisable();
 		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
 		eventManager.remove(PlayerTickListener.class, this);
 		eventManager.remove(ItemUseListener.class, this);

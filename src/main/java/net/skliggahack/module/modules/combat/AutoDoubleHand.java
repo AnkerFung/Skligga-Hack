@@ -8,8 +8,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.RaycastContext;
-import net.skliggahack.SkliggaHack;
-import net.skliggahack.event.EventManager;
 import net.skliggahack.event.events.PlayerTickListener;
 import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
@@ -88,14 +86,14 @@ public class AutoDoubleHand extends Module implements PlayerTickListener
 	@Override
 	public void onEnable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onEnable();
 		eventManager.add(PlayerTickListener.class, this);
 	}
 
 	@Override
 	public void onDisable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onDisable();
 		eventManager.remove(PlayerTickListener.class, this);
 	}
 

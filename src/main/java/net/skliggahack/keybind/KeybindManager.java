@@ -6,14 +6,13 @@ import net.skliggahack.gui.GuiScreen;
 import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import static net.skliggahack.SkliggaHack.MC;
 
 public class KeybindManager implements KeyPressListener
 {
 
-	private final HashMap<Integer, ArrayList<Keybind>> keybinds = new HashMap<>();
+	private final ArrayList<Keybind> keybinds = new ArrayList<>();
 
 	public KeybindManager()
 	{
@@ -23,9 +22,7 @@ public class KeybindManager implements KeyPressListener
 
 	public ArrayList<Keybind> getAllKeybinds()
 	{
-		ArrayList<Keybind> result = new ArrayList<>();
-		keybinds.forEach((i, a) -> result.addAll(a));
-		return result;
+		return (ArrayList<Keybind>) keybinds.clone();
 	}
 
 	public void removeAll()
@@ -36,45 +33,42 @@ public class KeybindManager implements KeyPressListener
 
 	public void addKeybind(Keybind keybind)
 	{
-		int key = keybind.getKey();
-		if (keybinds.containsKey(key))
-			keybinds.get(key).add(keybind);
-		else
-		{
-			keybinds.put(key, new ArrayList<>());
-			addKeybind(keybind);
-		}
+		keybinds.add(keybind);
+	}
+
+	public void removeKeybind(Keybind keybind)
+	{
+		keybinds.remove(keybind);
 	}
 
 	public void removeKeybind(String name)
 	{
-		keybinds.forEach((key, value) ->
-				value.removeIf(k ->
-						k.getName().equals(name)
-				)
-		);
+		keybinds.removeIf(e -> e.getName().equals(name));
 	}
 
 	@Override
 	public void onKeyPress(KeyPressListener.KeyPressEvent event)
 	{
-		if (MC.currentScreen != null)
-			return;
-		if (!keybinds.containsKey(event.getKeyCode()))
-			return;
-
-		for (Keybind keybind : keybinds.get(event.getKeyCode()))
+		for (Keybind keybind : keybinds)
 		{
-			if (keybind.shouldActivateOnPress() && event.getAction() == GLFW.GLFW_PRESS)
-				keybind.execute();
-			if (keybind.shouldActivateOnRelease() && event.getAction() == GLFW.GLFW_RELEASE)
-				keybind.execute();
+			if (event.getKeyCode() == keybind.getKey())
+			{
+				if (event.getAction() == GLFW.GLFW_PRESS)
+					keybind.press();
+				if (event.getAction() == GLFW.GLFW_RELEASE)
+					keybind.release();
+			}
 		}
 		//event.cancel();
 	}
 
 	private void addDefaultKeybinds()
 	{
-		addKeybind(new Keybind("ctrl-gui", GLFW.GLFW_KEY_RIGHT_CONTROL, true, false, () -> MC.setScreen(new GuiScreen())));
+		addKeybind(new Keybind("ctrl-gui", GLFW.GLFW_KEY_RIGHT_CONTROL, true, false, () ->
+		{
+			if (MC.currentScreen != null)
+				return;
+			MC.setScreen(new GuiScreen());
+		}));
 	}
 }

@@ -143,9 +143,12 @@ public class Window
 		}
 		if (!minimized && !canDrag(mouseX, mouseY))
 		{
-			for (Component component : components)
+			if (RenderUtils.isHoveringOver(mouseX, mouseY, x, draggable ? y + 10 : y, x + width, y + length))
 			{
-				component.onMouseClicked(mouseX, mouseY, button);
+				for (Component component : components)
+				{
+					component.onMouseClicked(mouseX, mouseY, button);
+				}
 			}
 		}
 	}

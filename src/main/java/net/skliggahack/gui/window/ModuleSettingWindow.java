@@ -21,10 +21,13 @@ public class ModuleSettingWindow extends Window
 		for (Setting<?> setting : module.getSettings())
 		{
 			Component component = setting.makeComponent(this);
-			component.setX(20);
-			component.setY(y);
-			addComponent(component);
-			y += component.getLength() + 20.0;
+			if (component != null)
+			{
+				component.setX(20);
+				component.setY(y);
+				addComponent(component);
+				y += component.getLength() + 20.0;
+			}
 		}
 	}
 

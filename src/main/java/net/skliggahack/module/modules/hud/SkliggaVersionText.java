@@ -1,8 +1,6 @@
 package net.skliggahack.module.modules.hud;
 
 import net.minecraft.client.util.math.MatrixStack;
-import net.skliggahack.SkliggaHack;
-import net.skliggahack.event.EventManager;
 import net.skliggahack.event.events.RenderHudListener;
 import net.skliggahack.module.Category;
 import net.skliggahack.module.Module;
@@ -14,20 +12,20 @@ public class SkliggaVersionText extends Module implements RenderHudListener
 
 	public SkliggaVersionText()
 	{
-		super("SkliggaVersionText", "SkliggaHax 4.2.0", true, Category.HUD);
+		super("SkliggaVersionText", "SkliggaHax 4.2.0", false, Category.HUD);
 	}
 
 	@Override
 	public void onEnable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onEnable();
 		eventManager.add(RenderHudListener.class, this);
 	}
 
 	@Override
 	public void onDisable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onDisable();
 		eventManager.remove(RenderHudListener.class, this);
 	}
 

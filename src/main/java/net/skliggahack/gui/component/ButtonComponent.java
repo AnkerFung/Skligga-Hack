@@ -5,25 +5,23 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.skliggahack.gui.window.Window;
 import net.skliggahack.util.RenderUtils;
+import org.lwjgl.glfw.GLFW;
 
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class CheckboxComponent extends Component
+import static net.skliggahack.SkliggaHack.MC;
+
+public class ButtonComponent extends Component
 {
 
-	private final static double checkboxSize = 10;
+	private final Runnable action;
+	private final Supplier<String> display;
 
-	private boolean value;
-	private final Consumer<Boolean> action;
-	private final Supplier<Boolean> availability;
-
-	public CheckboxComponent(Window parent, double x, double y, boolean value, Consumer<Boolean> action, Supplier<Boolean> availability, String name)
+	public ButtonComponent(Window parent, double x, double y, double length, String name, Runnable action, Supplier<String> display)
 	{
-		super(parent, x, y, 10, name);
-		this.value = value;
+		super(parent, x, y, length, name);
 		this.action = action;
-		this.availability = availability;
+		this.display = display;
 	}
 
 	@Override
@@ -38,38 +36,23 @@ public class CheckboxComponent extends Component
 		double parentY2 = parent.getY() + parentLength;
 		double x = getX() + parentX;
 		double y = Math.max(getY() + parentY, parentY);
-		double x2 = x + checkboxSize;
-		double y2 = Math.min(getY() + parentY + checkboxSize, parentY2);
+		double x2 = Math.min(x + getLength(), parentX2);
+		double y2 = Math.min(y + 10, parentY2);
 		if (getY() + 10 <= 0)
 			return;
 		if (parentY2 - (getY() + parentY) <= 0)
 			return;
 		RenderSystem.setShader(GameRenderer::getPositionShader);
-		RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1.0f);
-		RenderUtils.drawOutlinedQuad(x, y, x2, y2, matrices);
-		if (!availability.get() && !value)
-		{
-			RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 1.0f);
-			RenderUtils.drawQuad(x, y, x2, y2, matrices);
-		}
-		if (value)
-		{
-			x += 1;
-			y += 1;
-			x2 -= 1;
-			y2 -= 1;
+		RenderSystem.setShaderColor(0.4f, 0.4f, 0.4f, 0.4f);
+		if (RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x2, y2))
 			RenderSystem.setShaderColor(0.6f, 0.6f, 0.6f, 1.0f);
-			if (availability.get())
-				RenderSystem.setShaderColor(0, 0.8f, 0, 1.0f);
-			RenderUtils.drawQuad(x, y, x2, y2, matrices);
-		}
+		RenderUtils.drawQuad(x, y, x2, y2, matrices);
+		MC.textRenderer.draw(matrices, display.get(), (float)x, (float)y, 0xffffff);
 	}
 
 	@Override
 	public void onMouseClicked(double mouseX, double mouseY, int button)
 	{
-		if (!availability.get())
-			return;
 		double parentX = parent.getX();
 		double parentY = parent.getY();
 		double parentWidth = parent.getWidth();
@@ -78,16 +61,18 @@ public class CheckboxComponent extends Component
 		double parentY2 = parent.getY() + parentLength;
 		double x = getX() + parentX;
 		double y = Math.max(getY() + parentY, parentY);
-		double x2 = x + checkboxSize;
-		double y2 = Math.min(getY() + parentY + checkboxSize, parentY2);
+		double x2 = Math.min(x + getLength(), parentX2);
+		double y2 = Math.min(y + 10, parentY2);
 		if (getY() + 10 <= 0)
 			return;
 		if (parentY2 - (getY() + parentY) <= 0)
 			return;
 		if (RenderUtils.isHoveringOver(mouseX, mouseY, x, y, x2, y2))
 		{
-			value = !value;
-			action.accept(value);
+			if (button == GLFW.GLFW_MOUSE_BUTTON_1)
+			{
+				action.run();
+			}
 		}
 	}
 }

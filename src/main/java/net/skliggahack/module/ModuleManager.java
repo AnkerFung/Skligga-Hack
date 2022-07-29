@@ -45,9 +45,11 @@ public class ModuleManager
 	{
 		addModule(AutoCringe.class);
 		addModule(AutoDoubleHand.class);
+		addModule(AutoInventoryTotem.class);
 		addModule(AutoRekit.class);
 		addModule(CwCrystal.class);
 		addModule(GammaOverride.class);
+		addModule(AutoLootYeeter.class);
 		addModule(MarlowCrystal.class);
 		addModule(NoLoadingScreen.class);
 		//addModule(PlacementHighlight.class);

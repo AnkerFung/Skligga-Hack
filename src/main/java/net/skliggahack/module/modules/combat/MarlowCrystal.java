@@ -66,7 +66,7 @@ public class MarlowCrystal extends Module implements PlayerTickListener, ItemUse
 	@Override
 	public void onEnable()
 	{
-		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
+		super.onEnable();
 		eventManager.add(PlayerTickListener.class, this);
 		eventManager.add(ItemUseListener.class, this);
 		crystalBreakClock = 0;
@@ -75,6 +75,7 @@ public class MarlowCrystal extends Module implements PlayerTickListener, ItemUse
 	@Override
 	public void onDisable()
 	{
+		super.onDisable();
 		EventManager eventManager = SkliggaHack.INSTANCE.getEventManager();
 		eventManager.remove(PlayerTickListener.class, this);
 		eventManager.remove(ItemUseListener.class, this);
